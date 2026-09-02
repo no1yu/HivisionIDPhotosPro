@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="520" height="104" viewBox="0 0 520 104" role="img" aria-labelledby="title desc">
+  <title id="title">在线预览2</title>
+  <desc id="desc">打开HivisionIDPhotos Pro预览页面二</desc>
+  <rect x="2" y="2" width="516" height="100" rx="16" fill="#ffffff" stroke="#d5ddea" stroke-width="2"/>
+  <rect x="24" y="24" width="56" height="56" rx="12" fill="#49689d"/>
+  <rect x="37" y="37" width="30" height="27" rx="4" fill="none" stroke="#ffffff" stroke-width="3"/>
+  <path d="M38 45 H66" fill="none" stroke="#ffffff" stroke-width="3"/>
+  <circle cx="43" cy="41" r="1.6" fill="#ffffff"/>
+  <circle cx="49" cy="41" r="1.6" fill="#ffffff"/>
+  <text x="105" y="63" fill="#202631" font-family="Arial, 'Microsoft YaHei', sans-serif" font-size="29" font-weight="700">在线预览2</text>
+  <path d="M458 60 L474 44 M463 44 H474 V55" fill="none" stroke="#49689d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

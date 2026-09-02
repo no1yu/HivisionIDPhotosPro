@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Runtime
+*.log
+*.pid
+tmp/
+temp/
+
+# Local configuration
+.env
+.env.*
+
+# Models
+creator/models/*
+!creator/models/.gitkeep
+
+# IDE
+.idea/
+.vscode/
