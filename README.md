@@ -4,7 +4,7 @@
 
 <p align="center"><strong>一个面向多场景的智能图像处理项目，集成丰富图片处理能力，拥有更强的功能，更快的速度</strong></p>
 
-<p align="center"><a href="https://github.com/guaishoulab/HivisionIDPhotos-Pro/stargazers"><img src="https://img.shields.io/github/stars/guaishoulab/HivisionIDPhotos-Pro?style=flat&logo=github&label=Stars" alt="GitHub Stars"></a> <img src="https://img.shields.io/badge/Python-3.10.4-3776AB?logo=python&logoColor=white" alt="Python 3.10.4"> <img src="https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white" alt="FastAPI"> <img src="https://img.shields.io/badge/ONNX%20Runtime-CPU-005CED?logo=onnx&logoColor=white" alt="ONNX Runtime CPU"> <a href="./API.md"><img src="https://img.shields.io/badge/API-Documentation-2F80ED" alt="API Documentation"></a> <a href="https://github.com/Zeyi-Lin/HivisionIDPhotos"><img src="https://img.shields.io/badge/Based%20on-HivisionIDPhotos-F39C12" alt="Based on HivisionIDPhotos"></a> <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue" alt="Apache License 2.0"></a></p>
+<p align="center"><img src="https://img.shields.io/badge/Python-3.10.4-3776AB?logo=python&logoColor=white" alt="Python 3.10.4"> <img src="https://img.shields.io/badge/FastAPI-API-009688?logo=fastapi&logoColor=white" alt="FastAPI"> <img src="https://img.shields.io/badge/ONNX%20Runtime-CPU-005CED?logo=onnx&logoColor=white" alt="ONNX Runtime CPU"> <a href="./API.md"><img src="https://img.shields.io/badge/API-Documentation-2F80ED" alt="API Documentation"></a> <a href="https://github.com/Zeyi-Lin/HivisionIDPhotos"><img src="https://img.shields.io/badge/Based%20on-HivisionIDPhotos-F39C12" alt="Based on HivisionIDPhotos"></a> <a href="./LICENSE"><img src="https://img.shields.io/badge/License-Apache--2.0-blue" alt="Apache License 2.0"></a></p>
 
 <p align="center">
   <a href="https://hivisionidphotospro.0po.cn/demo/index.html"><img src="docs/preview-1.svg" alt="在线预览1" width="300"></a>
@@ -13,17 +13,15 @@
 
 <p align="center"><img src="docs/demo-image.jpg" alt="HivisionIDPhotos Pro 图片处理效果" width="900"></p>
 
-
-
+<br>
 
 # 最近更新
 
 - **2026.09.01：HivisionIDPhotos Pro 正式发布**
 
+<br>
 
-
-
-
+<br>
 
 # 项目简介
 
@@ -31,10 +29,9 @@
 
 在保留原项目功能的基础上，进一步扩展了更多图片处理能力，具体功能见下方「主要功能」，各项功能采用模块化设计并提供独立接口，既能按需调用，也能自由组合成完整的图片处理流程，可轻松接入您的网站、小程序、APP、管理系统及第三方业务
 
+<br>
 
-
-
-
+<br>
 
 # 主要功能
 
@@ -55,7 +52,7 @@
 - 黑白照片上色
 - 模糊图片变清晰
 
-
+<br>
 
 ## 相对原版改动
 
@@ -103,33 +100,30 @@
 - 修复水印透明度重复参与合成，导致实际水印比设置值更浅的问题
 - 修复模型文件缺失后仍继续处理并产生二次异常的问题，改为直接返回错误信息
 
+<br>
 
-
-
-
+<br>
 
 # 接口文档
 
 接口地址、请求参数、返回格式和错误协议统一在 [API.md](./API.md)
 
+<br>
 
-
-
-
+<br>
 
 # 社区
 
-一些由社区构建的 HivisionIDPhotos Pro 的有趣应用和扩展
+基于 HivisionIDPhotos Pro 构建的相关项目
 
 | [HivisionIDPhotos-wechat-weappV2](https://github.com/no1yu/HivisionIDPhotos-wechat-weappV2) | [映象引擎云平台](https://cloud.0po.cn/) |
 | :---: | :---: |
 | [![HivisionIDPhotos-wechat-weappV2](docs/1.png)](https://github.com/no1yu/HivisionIDPhotos-wechat-weappV2) | ![映象引擎云平台](docs/2.png) |
 | 证件照微信小程序（Java 后端 + 原生微信小程序） | 提供全部模型能力的接口平台 |
 
+<br>
 
-
-
-
+<br>
 
 # 运行环境
 
@@ -139,7 +133,7 @@
 
 ## 1.下载模型
 
-如果要部署**全部模型**，那么你的服务器至少要 8 核 8 GB（如果不想部署可以使用映象引擎：https://cloud.0po.cn/），所以**只需要下载你需要使用的模型**即可，把下载的模型文件放入指定文件夹即可，模型下载地址和指定文件夹说明见下方的**模型说明**
+无需下载全部模型，按实际需要下载并放入对应目录即可，具体地址和目录见下方「模型说明」。如果需要部署全部模型，服务器建议至少使用 8 核 8 GB；不想自行部署时，也可以使用[映象引擎](https://cloud.0po.cn/)
 
 ## 2.安装依赖
 
@@ -166,38 +160,118 @@ python3 -m uvicorn app:app --host 0.0.0.0 --port 8081 --workers 1 --limit-concur
 
 <p align="center"><img src="docs/3.png" alt="HivisionIDPhotos Pro 预览页面一" width="50%"><img src="docs/4.png" alt="HivisionIDPhotos Pro 预览页面二" width="50%"></p>
 
+<br>
 
-
+<br>
 
 ## 宝塔部署
 
 视频教程：http://xxx
 
+<br>
 
-
-
-
+<br>
 
 # 模型说明
 
 模型都可以在 CPU 上运行，用什么模型下什么模型即可，下载后放入 `creator/models/<指定文件夹>/`里面
 
-| 模型名字 | 用途 | 存放目录 | 模型下载 |
-| --- | --- | --- | :---: |
-| [NSFWJS MobileNetV2](https://github.com/infinitered/nsfwjs) | 图片鉴黄 | `nsfwjs` | [下载](https://share.weiyun.com/yiPd5sUH) |
-| [PP-MattingV2 STDC1 Human](https://github.com/PaddlePaddle/PaddleSeg/tree/release/2.10/Matting/configs/ppmattingv2) | 人像抠图 | `ppMattingV2` | [下载](https://share.weiyun.com/JWqtjeky) |
-| [hivision_modnet](https://github.com/Zeyi-Lin/HivisionIDPhotos) | 人像抠图 | `hivisionModnet` | [下载](https://share.weiyun.com/dMDex1z8) |
-| [MODNet](https://github.com/ZHKKKe/MODNet) | 精细人像抠图 | `modnetPhotographic` | [下载](https://share.weiyun.com/pnZL6kvz) |
-| [RMBG-1.4](https://huggingface.co/briaai/RMBG-1.4) | 通用人像抠图 | `rmbg` | [下载](https://share.weiyun.com/48p4xCDO) |
-| [YuNet](https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet) | 轻量人脸检测 | `yunet` | [下载](https://share.weiyun.com/A7J6YbGl) |
-| [Selfie Multiclass](https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter) | 换装人体解析 | `selfieMulticlass` | [下载](https://share.weiyun.com/Dc4u3ahd) |
-| [MTCNN](https://pypi.org/project/mtcnn-runtime/) | 人脸检测 | 无需操作 | 无需下载 |
-| [RetinaFace ResNet50](https://github.com/biubug6/Pytorch_Retinaface) | 人脸检测 | `retinaface` | [下载](https://share.weiyun.com/vjMby4QH) |
-| [Silueta](https://github.com/danielgatis/rembg) | 轻量精细抠图 | `silueta` | [下载](https://share.weiyun.com/pW2CkR3Y) |
-| [DCT-Net](https://github.com/menyifang/DCT-Net) | 动漫风照片 | `cartoon` | [下载](https://share.weiyun.com/JBilgV19) |
-| [DDColor ModelScope](https://github.com/piddnad/DDColor) | 黑白照片上色 | `ddcolor` | [下载](https://share.weiyun.com/Hacupzmc) |
-| [Real-ESRGAN General x4v3](https://github.com/xinntao/Real-ESRGAN) | 模糊图片变清晰 | `realEsrgan` | [下载](https://share.weiyun.com/x8T2Sw5L) |
-| [BiRefNet v1 Lite](https://github.com/ZhengPeng7/BiRefNet) | 高精度人像抠图 | `birefnet` | [下载](https://share.weiyun.com/vyRhf4Fq) |
+<table width="100%">
+  <thead>
+    <tr>
+      <th width="38%" align="left">模型名字</th>
+      <th width="20%" align="left">用途</th>
+      <th width="27%" align="left">存放目录</th>
+      <th width="15%" align="center">模型下载</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://github.com/infinitered/nsfwjs">NSFWJS MobileNetV2</a></td>
+      <td>图片鉴黄</td>
+      <td><code>nsfwjs</code></td>
+      <td align="center"><a href="https://share.weiyun.com/yiPd5sUH">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/PaddlePaddle/PaddleSeg/tree/release/2.10/Matting/configs/ppmattingv2">PP-MattingV2 STDC1 Human</a></td>
+      <td>人像抠图</td>
+      <td><code>ppMattingV2</code></td>
+      <td align="center"><a href="https://share.weiyun.com/JWqtjeky">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/Zeyi-Lin/HivisionIDPhotos">hivision_modnet</a></td>
+      <td>人像抠图</td>
+      <td><code>hivisionModnet</code></td>
+      <td align="center"><a href="https://share.weiyun.com/dMDex1z8">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/ZHKKKe/MODNet">MODNet</a></td>
+      <td>精细人像抠图</td>
+      <td><code>modnetPhotographic</code></td>
+      <td align="center"><a href="https://share.weiyun.com/pnZL6kvz">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://huggingface.co/briaai/RMBG-1.4">RMBG-1.4</a></td>
+      <td>通用人像抠图</td>
+      <td><code>rmbg</code></td>
+      <td align="center"><a href="https://share.weiyun.com/48p4xCDO">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/opencv/opencv_zoo/tree/main/models/face_detection_yunet">YuNet</a></td>
+      <td>轻量人脸检测</td>
+      <td><code>yunet</code></td>
+      <td align="center"><a href="https://share.weiyun.com/A7J6YbGl">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://developers.google.com/edge/mediapipe/solutions/vision/image_segmenter">Selfie Multiclass</a></td>
+      <td>换装人体解析</td>
+      <td><code>selfieMulticlass</code></td>
+      <td align="center"><a href="https://share.weiyun.com/Dc4u3ahd">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://pypi.org/project/mtcnn-runtime/">MTCNN</a></td>
+      <td>人脸检测</td>
+      <td>无需操作</td>
+      <td align="center">无需下载</td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/biubug6/Pytorch_Retinaface">RetinaFace ResNet50</a></td>
+      <td>人脸检测</td>
+      <td><code>retinaface</code></td>
+      <td align="center"><a href="https://share.weiyun.com/vjMby4QH">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/danielgatis/rembg">Silueta</a></td>
+      <td>轻量精细抠图</td>
+      <td><code>silueta</code></td>
+      <td align="center"><a href="https://share.weiyun.com/pW2CkR3Y">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/menyifang/DCT-Net">DCT-Net</a></td>
+      <td>动漫风照片</td>
+      <td><code>cartoon</code></td>
+      <td align="center"><a href="https://share.weiyun.com/JBilgV19">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/piddnad/DDColor">DDColor ModelScope</a></td>
+      <td>黑白照片上色</td>
+      <td><code>ddcolor</code></td>
+      <td align="center"><a href="https://share.weiyun.com/Hacupzmc">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/xinntao/Real-ESRGAN">Real-ESRGAN General x4v3</a></td>
+      <td>模糊图片变清晰</td>
+      <td><code>realEsrgan</code></td>
+      <td align="center"><a href="https://share.weiyun.com/x8T2Sw5L">下载</a></td>
+    </tr>
+    <tr>
+      <td><a href="https://github.com/ZhengPeng7/BiRefNet">BiRefNet v1 Lite</a></td>
+      <td>高精度人像抠图</td>
+      <td><code>birefnet</code></td>
+      <td align="center"><a href="https://share.weiyun.com/vyRhf4Fq">下载</a></td>
+    </tr>
+  </tbody>
+</table>
 
 补充来源：
 
@@ -208,15 +282,17 @@ python3 -m uvicorn app:app --host 0.0.0.0 --port 8081 --workers 1 --limit-concur
 5. `Real-ESRGAN General x4v3` 的 ONNX 导出来源为 
 6. 除 BiRefNet 外，其它模型首次请求时会加载到内存并常驻，用于加快后续处理速度；BiRefNet 因占用内存较大，每次执行完成后会进行释放内存
 
+<br>
 
-
-
+<br>
 
 # 如何修改水印字体？
 
 当前水印字体文件是 `tools/font/SourceHanSansSC-Regular.otf`，字体由 `tools/watermark.py` 读取
 
+<br>
 
+<br>
 
 更换字体时按以下步骤操作：
 
@@ -242,24 +318,18 @@ font = ImageFont.truetype(
 4. 两处文件名必须完全一致，否则服务可能启动失败，或调用 `/watermark` 时加载不到字体
 5. 重启服务后生效，再调用 `/watermark` 检查中文、英文和数字是否能正常显示
 
+<br>
 
-
-
-
-
+<br>
 
 # 如何添加社交媒体模板照？
 
-模板功能由 `tools/template/template_calculator.py` 读取模板 PNG 和 `tools/template/assets/template_config.json` 后完成合成
+![社交媒体模板锚点说明](docs/template-anchor-guide.png)
 
+新增模板只需要准备模板图片、添加坐标配置并开放模板名称：
 
-
-新增模板时按以下步骤操作：
-
-1. 制作一张带 Alpha 透明通道的四通道 PNG 模板图。需要放置照片的区域必须透明，其余装饰内容保持可见
-2. 将模板放入 `tools/template/assets/`。文件名就是接口使用的 `template_name`，例如新的文件名是： `template_3.png` 就需要对应 `template_name=template_3`
-3. 确认模板 PNG 的实际像素宽高，例如宽 `1080`、高 `1440`。该尺寸必须和下一步 JSON 中的 `width`、`height` 完全一致
-4. 打开 `tools/template/assets/template_config.json`，增加与文件名相同的配置：
+1. 制作带 Alpha 透明通道的 PNG 模板，照片区域保持透明，然后放入 `tools/template/assets/`。例如文件名为 `template_3.png`，接口参数就是 `template_name=template_3`
+2. 在 `tools/template/assets/template_config.json` 中添加同名配置，`width` 和 `height` 必须与模板图片的实际尺寸一致：
 
 ```json
 {
@@ -277,39 +347,19 @@ font = ImageFont.truetype(
 }
 ```
 
-5. 四个锚点都使用模板左上角作为坐标原点，单位为像素：
-   - `left_top`：照片覆盖参考范围的左上角
-   - `right_top`：照片覆盖参考范围的右上角
-   - `left_bottom`：照片覆盖参考范围的左下角
-   - `right_bottom`：照片覆盖参考范围的右下角
-   - `rotation`：照片覆盖方向相对竖直方向的角度，正数表示逆时针，负数表示顺时针
-
-锚点围成的是照片覆盖透明窗口时的参考范围，不是 PNG 透明区域的精确边界
-
-参考范围应略大于实际透明窗口，防止合成后边缘露白
-
-程序会根据四个锚点的最小、最大坐标得到覆盖宽高和粘贴起点，再将照片旋转、等比缩放并覆盖到模板下方，不进行四点透视变换
-
-6. 打开 `app.py`，找到 `/generate_template_photos` 接口中的模板校验：
-
-```python
-if template_name not in ["template_1", "template_2"]:
-    raise HTTPException(status_code=404, detail="模板名称无效")
-```
-
-将新模板加入允许列表：
+3. 四个锚点以模板左上角为原点，依次表示照片覆盖范围的左上、右上、左下和右下坐标；覆盖范围应略大于透明区域，避免边缘露白。`rotation` 正数为逆时针，负数为顺时针
+4. 在 `app.py` 的 `/generate_template_photos` 接口中加入新的模板名称：
 
 ```python
 if template_name not in ["template_1", "template_2", "template_3"]:
     raise HTTPException(status_code=404, detail="模板名称无效")
 ```
 
-7. 重启服务后生效，直接调用 `/generate_template_photos` 并传入 `template_name=template_3`。检查人物是否完整覆盖透明区域，以及四周是否露白、越界或旋转方向错误；如有偏差，只调整 `template_config.json` 的四个锚点和 `rotation`
+5. 重启服务并调用 `/generate_template_photos` 测试。如有露白、越界或方向偏差，调整四个锚点和 `rotation` 即可
 
-![社交媒体模板锚点说明](docs/template-anchor-guide.png)
+<br>
 
-
-
+<br>
 
 # 许可证
 
