@@ -114,11 +114,11 @@
 
 # 社区
 
-基于 HivisionIDPhotos Pro 构建的相关项目
+基于 HivisionIDPhotos Pro 开发的项目
 
 | [HivisionIDPhotos-wechat-weappV2](https://github.com/no1yu/HivisionIDPhotos-wechat-weappV2) | [映象引擎云平台](https://cloud.0po.cn/) |
 | :---: | :---: |
-| [![HivisionIDPhotos-wechat-weappV2](docs/1.png)](https://github.com/no1yu/HivisionIDPhotos-wechat-weappV2) | ![映象引擎云平台](docs/2.png) |
+| [![HivisionIDPhotos-wechat-weappV2](docs/1.png)](https://github.com/no1yu/HivisionIDPhotos-wechat-weappV2) | [![映象引擎云平台](docs/2.png)](https://cloud.0po.cn/) |
 | 证件照微信小程序（Java 后端 + 原生微信小程序） | 提供全部模型能力的接口平台 |
 
 <br>
@@ -179,10 +179,10 @@ python3 -m uvicorn app:app --host 0.0.0.0 --port 8081 --workers 1 --limit-concur
 <table width="100%">
   <thead>
     <tr>
-      <th width="38%" align="left">模型名字</th>
-      <th width="20%" align="left">用途</th>
-      <th width="27%" align="left">存放目录</th>
-      <th width="15%" align="center">模型下载</th>
+      <th width="360" align="left">模型名字</th>
+      <th width="190" align="left">用途</th>
+      <th width="270" align="left">存放目录</th>
+      <th width="130" align="center">模型下载</th>
     </tr>
   </thead>
   <tbody>
@@ -275,12 +275,13 @@ python3 -m uvicorn app:app --host 0.0.0.0 --port 8081 --workers 1 --limit-concur
 
 补充来源：
 
-1. 基于 [MODNet](https://github.com/ZHKKKe/MODNet)
-2. `RMBG-1.4` 算法基于 
-3. `Selfie Multiclass` 的 ONNX 转换来源为 
-4. `Silueta` 模型基于 
-5. `Real-ESRGAN General x4v3` 的 ONNX 导出来源为 
-6. 除 BiRefNet 外，其它模型首次请求时会加载到内存并常驻，用于加快后续处理速度；BiRefNet 因占用内存较大，每次执行完成后会进行释放内存
+1. `hivision_modnet` 基于 [MODNet](https://github.com/ZHKKKe/MODNet)
+2. `RMBG-1.4` 算法基于 [DIS](https://github.com/xuebinqin/DIS)
+3. `Selfie Multiclass` 的 ONNX 转换来源为 [linux-broadcast](https://github.com/Pedrojok01/linux-broadcast/blob/main/models/README.md)
+4. `Silueta` 模型基于 [U-2-Net](https://github.com/xuebinqin/U-2-Net)
+5. `Real-ESRGAN General x4v3` 的 ONNX 导出来源为 [Qualcomm AI Hub Models](https://github.com/qualcomm/ai-hub-models/tree/main/qai_hub_models/models/real_esrgan_general_x4v3)
+
+除 BiRefNet 外，其它模型首次请求时会加载到内存并常驻，用于加快后续处理速度；BiRefNet 因占用内存较大，每次执行完成后会释放内存
 
 <br>
 
