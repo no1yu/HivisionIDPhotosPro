@@ -181,7 +181,7 @@ python3 -m uvicorn app:app --host 0.0.0.0 --port 8081 --workers 1 --limit-concur
     <tr>
       <th width="360" align="left">模型名字</th>
       <th width="190" align="left">用途</th>
-      <th width="270" align="left">存放目录</th>
+      <th width="270" align="left">指定文件夹</th>
       <th width="130" align="center">模型下载</th>
     </tr>
   </thead>
@@ -368,4 +368,4 @@ if template_name not in ["template_1", "template_2", "template_3"]:
 
 本项目与原项目一样，遵循 [Apache License 2.0](https://chatgpt.com/c/LICENSE) 开源许可协议
 
-特别感谢 HivisionIDPhotos 项目及作者的开源贡献
+特别感谢 HivisionIDPhotos 的开源贡献
