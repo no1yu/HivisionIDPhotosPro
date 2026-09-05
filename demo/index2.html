@@ -72,6 +72,11 @@
         .result-view{height:270px;display:flex;align-items:center;justify-content:center;overflow:hidden;background-color:#fafafa;background-image:linear-gradient(45deg,#edf0f3 25%,transparent 25%),linear-gradient(-45deg,#edf0f3 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#edf0f3 75%),linear-gradient(-45deg,transparent 75%,#edf0f3 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
         .result-item.wide .result-view{height:330px}
         .result-placeholder{color:#8a94a3;font-size:13px}
+        .result-view.loading .result-placeholder{display:none}
+        .result-loading{display:none;flex-direction:column;align-items:center;gap:10px;color:var(--muted);font-size:13px}
+        .result-view.loading .result-loading{display:flex}
+        .result-spinner{width:34px;height:34px;border:3px solid var(--primary-soft);border-top-color:var(--primary);border-radius:50%;animation:result-spin .75s linear infinite}
+        @keyframes result-spin{to{transform:rotate(360deg)}}
         .result-image{display:none;width:100%;height:100%;object-fit:contain}
         .result-info{display:none;align-items:center;justify-content:space-between;gap:8px;padding:8px 10px;border-top:1px solid var(--line)}
         .result-meta{min-width:0;color:#7c8796;font-size:11px}
@@ -128,8 +133,8 @@
     </div>
 
     <script>
-        const humanModels=[{value:"ppMattingV2",label:"PP-MattingV2"},{value:"silueta",label:"Silueta"}]
-        const faceModels=[{value:"yunet",label:"YuNet"}]
+        const humanModels=[{value:"ppMattingV2",label:"PP-MattingV2"},{value:"hivisionModnet",label:"hivision_modnet"},{value:"modnetPhotographic",label:"MODNet"},{value:"rmbg",label:"RMBG-1.4"},{value:"silueta",label:"Silueta"},{value:"birefnet",label:"BiRefNet v1 Lite"}]
+        const faceModels=[{value:"yunet",label:"YuNet"},{value:"mtcnn",label:"MTCNN"},{value:"retinaface",label:"RetinaFace ResNet50"}]
         const boolOptions=[{value:"true",label:"开启"},{value:"false",label:"关闭"}]
         const presetSizes={
             one:{label:"一寸",height:413,width:295},two:{label:"二寸",height:626,width:413},smallOne:{label:"小一寸",height:378,width:260},smallTwo:{label:"小二寸",height:531,width:413},largeOne:{label:"大一寸",height:567,width:390},largeTwo:{label:"大二寸",height:626,width:413},five:{label:"五寸",height:1499,width:1050},teacher:{label:"教师资格证",height:413,width:295},civil:{label:"国家公务员考试",height:413,width:295},accounting:{label:"初级会计考试",height:413,width:295},cet:{label:"英语四六级考试",height:192,width:144},computer:{label:"计算机等级考试",height:567,width:390},postgraduate:{label:"研究生考试",height:709,width:531},social:{label:"社保卡",height:441,width:358},driver:{label:"电子驾驶证",height:378,width:260},usa:{label:"美国签证",height:600,width:600},japan:{label:"日本签证",height:413,width:295},korea:{label:"韩国签证",height:531,width:413}
@@ -295,7 +300,7 @@
             results.innerHTML=state.feature.workflow?`<div class="result-grid">${resultItem("standard","标准证件照",false)}${resultItem("hd","高清证件照",false)}${resultItem("layout","排版照",true)}</div>`:`<div class="result-grid single-result">${resultItem("single","处理结果",true)}</div>`
         }
 
-        function resultItem(id,label,wide){return `<div class="result-item${wide?" wide":""}" id="result-${id}"><div class="result-label">${label}</div><div class="result-view"><span class="result-placeholder">暂无结果</span><img class="result-image" alt="${label}"><div class="json-result"></div></div><div class="result-info"><span class="result-meta"></span><a class="download">下载</a></div></div>`}
+        function resultItem(id,label,wide){return `<div class="result-item${wide?" wide":""}" id="result-${id}"><div class="result-label">${label}</div><div class="result-view"><span class="result-placeholder">暂无结果</span><div class="result-loading"><span class="result-spinner"></span><span>正在处理</span></div><img class="result-image" alt="${label}"><div class="json-result"></div></div><div class="result-info"><span class="result-meta"></span><a class="download">下载</a></div></div>`}
         function getControl(name){return document.querySelector(`[data-field-name="${name}"]`)}
         function value(name){const control=getControl(name);return control?control.value.trim():""}
 
@@ -308,6 +313,7 @@
         function clearMessage(){message.className="message";message.textContent=""}
         function showMessage(text,type){message.className="message "+type;message.textContent=text}
         function setBusy(busy,text){start.disabled=busy;start.textContent=busy?text:"开始制作"}
+        function setResultBusy(busy){document.querySelectorAll(".result-view").forEach(view=>view.classList.toggle("loading",busy))}
 
         async function request(endpoint,formData){
             const response=await fetch(endpoint,{method:"POST",body:formData}),type=response.headers.get("content-type")||""
@@ -341,12 +347,14 @@
 
         function showImage(id,blob,type,name){
             const item=document.getElementById("result-"+id),image=item.querySelector(".result-image"),placeholder=item.querySelector(".result-placeholder"),info=item.querySelector(".result-info"),meta=item.querySelector(".result-meta"),download=item.querySelector(".download")
+            item.querySelector(".result-view").classList.remove("loading")
             const url=URL.createObjectURL(blob);state.resultUrls.push(url);image.src=url;image.style.display="block";placeholder.style.display="none";info.style.display="flex"
             const ext=type.includes("jpeg")?"jpg":type.includes("gif")?"gif":"png";download.href=url;download.download=name+"."+ext;image.onload=()=>meta.textContent=`${image.naturalWidth}×${image.naturalHeight}px · ${(blob.size/1024).toFixed(1)}KB`
         }
 
         function showScores(data){
             const item=document.getElementById("result-single"),placeholder=item.querySelector(".result-placeholder"),json=item.querySelector(".json-result"),labels={drawings:"绘画",hentai:"色情动漫",neutral:"中性",porn:"色情",sexy:"性感"};json.innerHTML=""
+            item.querySelector(".result-view").classList.remove("loading")
             Object.entries(labels).forEach(([key,label])=>{const score=Number(data[key]||0),row=document.createElement("div");row.className="score";row.innerHTML=`<span class="score-name">${label}</span><span class="score-track"><span class="score-bar" style="width:${Math.min(100,Math.max(0,score*100))}%"></span></span><span class="score-number">${(score*100).toFixed(2)}%</span>`;json.appendChild(row)})
             placeholder.style.display="none";json.style.display="block"
         }
@@ -366,9 +374,9 @@
         }
 
         async function submit(){
-            if(!state.file){showMessage("请先选择图片","error");return}renderResults();clearMessage()
+            if(!state.file){showMessage("请先选择图片","error");return}renderResults();clearMessage();setResultBusy(true)
             try{if(state.feature.workflow)await makeIdPhoto();else{setBusy(true,"正在处理");const result=await request(state.feature.endpoint,genericForm());if(result.json)showScores(result.json.data||{});else showImage("single",result.blob,result.type,state.feature.download)}showMessage("处理完成","success")}
-            catch(error){let errorMessage=error.message;if(errorMessage==="Failed to fetch")errorMessage="服务链接失败";showMessage(errorMessage,"error")}finally{setBusy(false)}
+            catch(error){let errorMessage=error.message;if(errorMessage==="Failed to fetch")errorMessage="服务链接失败";showMessage(errorMessage,"error")}finally{setResultBusy(false);setBusy(false)}
         }
 
         inputFile.addEventListener("change",()=>setFile(inputFile.files[0]))
