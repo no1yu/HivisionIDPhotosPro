@@ -523,6 +523,92 @@ def _create_face_protection_mask(
     return cv2.GaussianBlur(mask, (0, 0), 0.45)
 
 
+def _fit_clothes_collar(
+    clothes_layer: np.ndarray,
+    input_image: np.ndarray,
+    face: np.ndarray,
+    neck_geometry: dict,
+    garment_geometry: dict,
+) -> np.ndarray:
+    """让领口两侧贴合真实脖子，并在领口底部恢复服装原始形状"""
+    image_height, image_width = input_image.shape[:2]
+    face_x, _, face_width, face_height = [float(value) for value in face[:4]]
+    center_x = face_x + face_width / 2.0
+    center_column = round(center_x)
+    collar_y = garment_geometry["collar_y"]
+    collar_spans = []
+    skin_spans = []
+    scan_top = max(0, round(neck_geometry["chin_y"] - face_height * 0.35))
+    scan_bottom = min(image_height, round(collar_y))
+    for row in range(scan_top, scan_bottom):
+        collar_span = _find_transparent_center_span(
+            clothes_layer[row, :, 3],
+            center_column,
+        )
+        if collar_span is None or collar_span[1] - collar_span[0] < face_width * 0.20:
+            continue
+        skin_span = _find_center_span(
+            (neck_geometry["skin_probability"][row] > 0.72)
+            & (input_image[row, :, 3] > 240),
+            center_column,
+            max(2, round(face_width * 0.10)),
+        )
+        if skin_span is None:
+            continue
+        collar_spans.append((row, collar_span[0], collar_span[1]))
+        skin_spans.append(skin_span)
+        if len(collar_spans) >= max(3, round(face_width * 0.018)):
+            break
+
+    # 领口高度没有可靠的真实皮肤时保留服装形状，由脖子补全层衔接
+    if not collar_spans:
+        return clothes_layer
+    source_left = float(np.median([span[1] for span in collar_spans]))
+    source_right = float(np.median([span[2] for span in collar_spans]))
+    target_left = float(np.median([span[0] for span in skin_spans]))
+    target_right = float(np.median([span[1] for span in skin_spans]))
+    if not target_left < center_x < target_right:
+        return clothes_layer
+
+    outer_left = min(source_left, target_left) - face_width * 0.25
+    outer_right = max(source_right, target_right) + face_width * 0.25
+    columns = np.arange(image_width, dtype=np.float32)
+    horizontal_offset = np.interp(
+        columns,
+        [outer_left, target_left, center_x, target_right, outer_right],
+        [outer_left, source_left, center_x, source_right, outer_right],
+    ) - columns
+    horizontal_offset[(columns <= outer_left) | (columns >= outer_right)] = 0.0
+    rows = np.arange(image_height, dtype=np.float32)
+    collar_top = collar_spans[0][0]
+    progress = np.clip((rows - collar_top) / (collar_y - collar_top), 0.0, 1.0)
+    weight = 1.0 - progress * progress * (3.0 - 2.0 * progress)
+    map_x = np.float32(columns[None, :] + weight[:, None] * horizontal_offset[None, :])
+    map_y = np.broadcast_to(rows[:, None], (image_height, image_width)).copy()
+
+    normalized = clothes_layer.astype(np.float32) / 255.0
+    normalized[:, :, :3] *= normalized[:, :, 3:4]
+    remapped = cv2.remap(
+        normalized,
+        map_x,
+        map_y,
+        interpolation=cv2.INTER_LINEAR,
+        borderMode=cv2.BORDER_CONSTANT,
+    )
+    remapped[:, :, :3] = np.divide(
+        remapped[:, :, :3],
+        remapped[:, :, 3:4],
+        out=np.zeros_like(remapped[:, :, :3]),
+        where=remapped[:, :, 3:4] > 0,
+    )
+    fitted_layer = clothes_layer.copy()
+    changed = (weight[:, None] > 0) & (horizontal_offset[None, :] != 0)
+    fitted_layer[changed] = np.uint8(np.clip(remapped[changed] * 255.0, 0, 255))
+    garment_geometry["opening_left_x"] = target_left
+    garment_geometry["opening_right_x"] = target_right
+    return fitted_layer
+
+
 def _create_clothes_layer(
     input_image: np.ndarray,
     clothes_image: np.ndarray,
@@ -586,17 +672,19 @@ def _create_clothes_layer(
 
     opening_left_x = clothes_left + clothes_geometry["opening_left"] * source_scale
     opening_right_x = clothes_left + clothes_geometry["opening_right"] * source_scale
-    source_shoulder_y = float(
-        np.mean([point[1] for point in clothes_calibration["shoulders"]])
-        * source_height
-    )
-    shoulder_y = best_top + source_shoulder_y * source_scale
-    return clothes_layer, {
+    garment_geometry = {
         "opening_left_x": opening_left_x,
         "opening_right_x": opening_right_x,
         "collar_y": collar_y,
-        "shoulder_y": shoulder_y,
     }
+    clothes_layer = _fit_clothes_collar(
+        clothes_layer,
+        input_image,
+        face,
+        neck_geometry,
+        garment_geometry,
+    )
+    return clothes_layer, garment_geometry
 
 
 def _create_head_layer(
@@ -604,10 +692,8 @@ def _create_head_layer(
     face: np.ndarray,
     parsing_probabilities: np.ndarray,
     chin_y: float,
-    shoulder_y: float,
-    clothes_layer: np.ndarray,
 ) -> np.ndarray:
-    """保留连续原始头部，并让衣服在肩线以下自然遮挡长发"""
+    """保留原始头部透明度，供服装图层沿自身轮廓遮挡长发"""
     image_height = input_image.shape[0]
     _, _, _, face_height = [float(value) for value in face[:4]]
     rows = np.arange(image_height, dtype=np.float32)
@@ -624,18 +710,9 @@ def _create_head_layer(
         + parsing_probabilities[:, :, 3] * face_keep[:, None]
         + parsing_probabilities[:, :, 5]
     )
+    # 原始Alpha已经区分人物与背景，头部保留只比较人物内部类别
+    head_probability /= np.sum(parsing_probabilities[:, :, 1:], axis=2)
     mask = np.clip((head_probability - 0.08) / 0.72, 0.0, 1.0)
-    occlusion_start = shoulder_y - face_height * 0.03
-    occlusion_end = shoulder_y + face_height * 0.09
-    progress = np.clip(
-        (rows - occlusion_start) / max(occlusion_end - occlusion_start, 1.0),
-        0.0,
-        1.0,
-    )
-    progress = progress * progress * (3.0 - 2.0 * progress)
-    clothes_alpha = clothes_layer[:, :, 3].astype(np.float32) / 255.0
-    clothes_alpha = cv2.GaussianBlur(clothes_alpha, (0, 0), 0.65)
-    mask *= 1.0 - clothes_alpha * progress[:, None]
     mask = cv2.GaussianBlur(mask, (0, 0), 0.6)
 
     head_layer = input_image.copy()
@@ -715,12 +792,39 @@ def _create_neck_layer(
     neck_geometry: dict,
     garment_geometry: dict,
 ) -> np.ndarray:
-    """沿真实下颌曲线恢复脖子，并自动补足衣领所需的宽度和长度"""
+    """优先保留真实脖子，原图皮肤不足时再补足衣领所需区域"""
     image_height, image_width = input_image.shape[:2]
-    face_x, _, face_width, face_height = [float(value) for value in face[:4]]
+    face_x, face_y, face_width, face_height = [float(value) for value in face[:4]]
     center_x = face_x + face_width / 2.0
     chin_y = neck_geometry["chin_y"]
     collar_y = garment_geometry["collar_y"]
+
+    skin_mask = np.clip(
+        (neck_geometry["skin_probability"] - 0.16) / 0.56,
+        0.0,
+        1.0,
+    )
+    original_alpha = input_image[:, :, 3].astype(np.float32) / 255.0
+    real_neck_layer = input_image.copy()
+    real_neck_mask = np.zeros((image_height, image_width), dtype=np.float32)
+    real_top = max(0, round(face_y + face_height * 0.5))
+    real_left = max(0, round(center_x - face_width * 0.4))
+    real_right = min(image_width, round(center_x + face_width * 0.4) + 1)
+    collar_bottom = min(image_height - 1, round(collar_y + face_height * 0.015))
+    real_bottom = min(
+        image_height,
+        round(max(collar_bottom, neck_geometry["skin_bottom"])) + 1,
+    )
+    real_neck_mask[real_top:real_bottom, real_left:real_right] = (
+        skin_mask[real_top:real_bottom, real_left:real_right]
+        * original_alpha[real_top:real_bottom, real_left:real_right]
+    )
+    real_neck_layer[:, :, 3] = np.uint8(
+        np.clip(real_neck_mask * 255.0, 0, 255)
+    )
+    # 真实皮肤足以覆盖领口时直接保留，不重新拉伸或裁切脖子
+    if neck_geometry["skin_bottom"] >= collar_bottom:
+        return real_neck_layer
 
     geometry_mask = np.zeros((image_height, image_width), dtype=np.float32)
     opening_half_width = (
@@ -751,7 +855,7 @@ def _create_neck_layer(
     output_top = int(np.clip(round(chin_y - neck_top_rise), 0, image_height - 1))
     output_bottom = int(
         np.clip(
-            round(collar_y + face_height * 0.015),
+            collar_bottom,
             output_top + 1,
             image_height - 1,
         )
@@ -856,12 +960,6 @@ def _create_neck_layer(
         borderMode=cv2.BORDER_CONSTANT,
         borderValue=0,
     )
-    skin_mask = np.clip(
-        (neck_geometry["skin_probability"] - 0.16) / 0.56,
-        0.0,
-        1.0,
-    )
-    original_alpha = input_image[:, :, 3].astype(np.float32) / 255.0
     real_mask = skin_mask * geometry_mask * original_alpha
     if not has_neck_texture:
         rows = np.arange(image_height, dtype=np.float32)
@@ -949,7 +1047,8 @@ def _create_neck_layer(
     neck_layer = np.zeros_like(input_image)
     neck_layer[:, :, :3] = np.uint8(np.clip(output_color * 255.0, 0, 255))
     neck_layer[:, :, 3] = np.uint8(np.clip(geometry_mask * 255.0, 0, 255))
-    return neck_layer
+    # 重建层只补缺失区域，已有真实皮肤保持原样
+    return _alpha_composite(neck_layer, real_neck_layer)
 
 
 def change_clothes(
@@ -999,8 +1098,6 @@ def change_clothes(
         face,
         parsing_probabilities,
         neck_geometry["chin_y"],
-        garment_geometry["shoulder_y"],
-        clothes_layer,
     )
     face_layer = _create_face_protection_layer(
         input_image,
@@ -1009,6 +1106,7 @@ def change_clothes(
         neck_geometry["chin_y"],
     )
 
-    dressed_image = _alpha_composite(neck_layer, clothes_layer)
-    dressed_image = _alpha_composite(dressed_image, head_layer)
+    # 服装沿自身透明轮廓盖住长发，脸部最后恢复
+    dressed_image = _alpha_composite(neck_layer, head_layer)
+    dressed_image = _alpha_composite(dressed_image, clothes_layer)
     return _alpha_composite(dressed_image, face_layer)
