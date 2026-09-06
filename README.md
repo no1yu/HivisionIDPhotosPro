@@ -166,7 +166,7 @@ python3 -m uvicorn app:app --host 0.0.0.0 --port 8081 --workers 1 --limit-concur
 
 ## 宝塔部署
 
-视频教程：http://xxx
+视频教程：https://www.bilibili.com/video/BV1oGtz6yEQM/
 
 <br>
 
